@@ -7,11 +7,13 @@ from app.routers import profile, experiences, projects
 
 app = FastAPI(title="Weber Huang Portfolio API")
 
-origins = os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
+cors_env = os.getenv("CORS_ORIGINS", "*")
+origins = ["*"] if cors_env == "*" else [o.strip() for o in cors_env.split(",")]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_credentials=cors_env != "*",
     allow_methods=["*"],
     allow_headers=["*"],
 )
