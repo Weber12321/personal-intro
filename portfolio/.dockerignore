@@ -1,0 +1,7 @@
+.git
+.gitignore
+*.md
+docker-compose.yml
+Dockerfile.railway
+.playwright-mcp/
+screenshot-*.png
