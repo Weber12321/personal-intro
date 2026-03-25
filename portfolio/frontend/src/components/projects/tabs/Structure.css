@@ -1,0 +1,68 @@
+.structure-tab {
+  height: 500px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.structure-tab .react-flow__controls {
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-sm);
+}
+
+.flow-node {
+  position: relative;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  border: 2px solid;
+  min-width: 120px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: default;
+  transition: box-shadow var(--transition);
+}
+
+.flow-node:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.flow-handle {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border: none;
+}
+
+.flow-node-label {
+  white-space: nowrap;
+}
+
+.flow-node-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-sidebar);
+  color: var(--text-inverse);
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.5;
+  width: max-content;
+  max-width: 280px;
+  white-space: normal;
+  z-index: 10;
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+}
+
+.flow-node-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--bg-sidebar);
+}

@@ -1,0 +1,55 @@
+experiences:
+  - id: trend-2025
+    year: "2025"
+    company: Trend Micro
+    title: Senior AI Engineer
+    summary: Agentic AI & Hyper-automation
+    highlights:
+      - 使用 LangGraph 構建跨區域智能服務，確保操作擴展性
+      - 開發 FastMCP 工具鏈，利用 FastAPI 優化延遲，透過 MCP 提升準確率
+      - 自動化 D365 CRM 重複性工作流，實質減少人工干預時間
+    description: |
+      在趨勢科技負責 Agentic AI 與超自動化專案。使用 LangGraph 構建跨區域的智能服務，
+      確保系統操作在龐大架構下依然具備擴展性。開發了 FastMCP 工具鏈，利用 FastAPI 優化
+      系統延遲，並透過 MCP 架構大幅提升了助理回覆的準確率。同時與自動化團隊合作推動
+      D365 CRM 的內部工作流自動化，成功且實質地減少了人工干預的時間。
+
+  - id: tpi-principal-2024
+    year: "2024"
+    company: TPIsoftware
+    title: Principal RD (研發主任)
+    summary: Enterprise GenAI Assistant
+    highlights:
+      - 針對 Breeze 7B 及 Llama 3.1 提出兩階段 SFT 方案，顯著提升企業知識回覆準確率
+      - 建立大規模非同步金融知識指令集，解決多代理架構下的數據一致性問題
+      - 帶領演算法團隊建構企業級 MLOps 平台 (DVC/MLflow)
+    description: |
+      擔任研發主任時期，主導企業級生成式 AI 助理的開發。針對 Breeze 7B 及 Llama 3.1
+      提出了兩階段的監督式微調 (SFT) 方案，這項優化顯著提升了企業內部知識回覆的準確率。
+      為了解決多代理 (Multi-agent) 架構下的數據一致性問題，建立了一套大規模的非同步金融
+      知識指令集。帶領演算法團隊建構了基於 DVC 與 MLflow 的企業級 MLOps 平台，
+      也親自指導實習生使用 Django REST Framework 等技術來開發自動化數據管理系統。
+
+  - id: tpi-senior-2022
+    year: "2022"
+    company: TPIsoftware
+    title: Senior RD Engineer
+    summary: NLP & Enterprise AI Solutions
+    highlights:
+      - 開發企業級 NLP 應用與 RAG 系統
+      - 建構自動化數據管理系統
+    description: |
+      在昕力資訊擔任資深研發工程師，負責企業級 NLP 應用的開發與 RAG 系統建構，
+      為後續生成式 AI 助理專案奠定基礎。
+
+  - id: eland-2021
+    year: "2021"
+    company: Eland Information
+    title: NLP RD Engineer
+    summary: 自然語言處理研發
+    highlights:
+      - 情感分析系統開發
+      - NLP 模型訓練與優化
+    description: |
+      在意藍資訊擔任自然語言處理研發工程師，負責情感分析系統的開發與 NLP 模型的訓練優化，
+      建立了紮實的自然語言處理基礎。

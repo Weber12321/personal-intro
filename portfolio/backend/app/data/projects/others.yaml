@@ -1,0 +1,59 @@
+id: others
+name: Others
+short_description: Side Projects & Open Source Contributions
+company: Personal
+year: "2021-2025"
+tags:
+  - NLP
+  - Sentiment Analysis
+  - Open Source
+
+tabs:
+  - id: description
+    label: Description
+    type: text
+    content: |
+      ## Other Projects
+
+      ### NLP Research (Eland Information, 2021)
+      - 情感分析系統的開發與優化
+      - NLP 模型訓練 pipeline 建立
+
+      ### Open Source & Side Projects
+      - AI 工具鏈開發與實驗
+      - 技術社群分享與知識整理
+
+  - id: structure
+    label: Structure
+    type: diagram
+    nodes:
+      - id: nlp
+        label: NLP Models
+        x: 150
+        y: 100
+        tooltip: 情感分析、文本分類等 NLP 基礎模型
+        type: process
+      - id: tools
+        label: AI Toolchain
+        x: 150
+        y: 230
+        tooltip: 個人開發的 AI 工具與自動化腳本
+        type: process
+      - id: community
+        label: Community
+        x: 400
+        y: 165
+        tooltip: 技術分享、開源貢獻
+        type: output
+    edges:
+      - source: nlp
+        target: community
+        label: research
+      - source: tools
+        target: community
+        label: sharing
+
+  - id: gallery
+    label: Pictures
+    type: gallery
+    images: []

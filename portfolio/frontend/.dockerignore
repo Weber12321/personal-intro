@@ -1,0 +1,10 @@
+node_modules
+dist
+.vite
+.eslintcache
+*.log
+.env
+.env.local
+.git
+.gitignore
+coverage

@@ -1,0 +1,86 @@
+id: appsiq
+name: AppsIQ
+short_description: Agentic AI Workflow & Hyper-automation Platform
+company: Trend Micro
+year: "2025"
+tags:
+  - LangGraph
+  - FastAPI
+  - MCP
+  - Agentic AI
+
+tabs:
+  - id: description
+    label: Description
+    type: text
+    content: |
+      ## AppsIQ Overview
+
+      AppsIQ 是趨勢科技內部的 Agentic AI 與超自動化平台，透過 LangGraph 構建跨區域智能服務，
+      整合 FastMCP 工具鏈實現高效率的任務自動化。
+
+      ### Key Features
+      - **Agentic Workflows**: 基於 LangGraph 的多代理工作流編排
+      - **FastMCP Toolchain**: 利用 FastAPI 優化系統延遲，MCP 架構提升回覆準確率
+      - **D365 CRM Integration**: 自動化重複性工作流，減少人工干預
+
+      ### Technical Highlights
+      - Cross-regional service orchestration
+      - Real-time task routing and execution
+      - Scalable agent architecture
+
+  - id: structure
+    label: Structure
+    type: diagram
+    nodes:
+      - id: user
+        label: User Request
+        x: 50
+        y: 150
+        tooltip: 使用者透過介面提交任務需求
+        type: input
+      - id: orchestrator
+        label: Agent Orchestrator
+        x: 250
+        y: 150
+        tooltip: LangGraph 驅動的工作流編排引擎，負責任務拆解與路由
+        type: process
+      - id: mcp
+        label: FastMCP Tools
+        x: 450
+        y: 80
+        tooltip: FastAPI-based MCP 工具鏈，提供低延遲的外部系統存取
+        type: agent
+      - id: crm
+        label: D365 CRM
+        x: 450
+        y: 220
+        tooltip: Microsoft Dynamics 365 CRM 整合，自動化客戶服務流程
+        type: agent
+      - id: output
+        label: Response
+        x: 650
+        y: 150
+        tooltip: 彙整所有 Agent 的執行結果，回傳最終回覆
+        type: output
+    edges:
+      - source: user
+        target: orchestrator
+        label: task
+      - source: orchestrator
+        target: mcp
+        label: tool call
+      - source: orchestrator
+        target: crm
+        label: automation
+      - source: mcp
+        target: output
+        label: result
+      - source: crm
+        target: output
+        label: status
+
+  - id: gallery
+    label: Pictures
+    type: gallery
+    images: []

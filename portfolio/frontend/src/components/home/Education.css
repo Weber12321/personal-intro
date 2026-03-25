@@ -1,0 +1,54 @@
+.edu-lang-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .edu-lang-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.edu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.edu-card h3 {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.edu-field {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.edu-degree {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.lang-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.lang-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lang-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.lang-level {
+  font-size: 0.85rem;
+  color: var(--accent);
+}
