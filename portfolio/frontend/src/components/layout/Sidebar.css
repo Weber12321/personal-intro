@@ -93,3 +93,20 @@
   color: var(--accent-light);
   background: rgba(139, 111, 71, 0.15);
 }
+
+.sidebar-group {
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-group-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0.35rem 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.sidebar-link--nested {
+  padding-left: 1.5rem;
+  font-size: 0.85rem;
+}
