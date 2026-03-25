@@ -1,0 +1,92 @@
+id: systalk_viki
+name: Systalk.VIKI
+short_description: Enterprise GenAI Assistant with LLM Fine-tuning
+company: TPIsoftware
+year: "2024"
+tags:
+  - LLM Fine-tuning
+  - Breeze 7B
+  - Llama 3.1
+  - Multi-agent
+  - MLOps
+
+tabs:
+  - id: description
+    label: Description
+    type: text
+    content: |
+      ## Systalk.VIKI — Enterprise GenAI Assistant
+
+      昕力資訊旗下企業級生成式 AI 助理，結合 LLM 微調與多代理架構，為金融產業客戶提供
+      精準的內部知識問答服務。
+
+      ### Key Features
+      - **兩階段 SFT 方案**: 針對 Breeze 7B 及 Llama 3.1 的監督式微調
+      - **金融知識指令集**: 大規模非同步建構，解決多代理架構的數據一致性
+      - **MLOps 平台**: 基於 DVC 與 MLflow 的企業級模型生命週期管理
+
+      ### Impact
+      - 企業內部知識回覆準確率顯著提升
+      - 建立可重複使用的 SFT pipeline
+
+  - id: structure
+    label: Structure
+    type: diagram
+    nodes:
+      - id: data
+        label: Financial Data
+        x: 50
+        y: 100
+        tooltip: 金融領域知識庫，包含法規、產品說明、FAQ 等
+        type: input
+      - id: sft
+        label: 2-Stage SFT
+        x: 250
+        y: 100
+        tooltip: "第一階段：通用指令微調；第二階段：領域知識精調"
+        type: process
+      - id: model
+        label: Breeze 7B / Llama 3.1
+        x: 450
+        y: 100
+        tooltip: 微調後的 LLM，具備金融領域專業知識
+        type: agent
+      - id: multi_agent
+        label: Multi-Agent
+        x: 450
+        y: 230
+        tooltip: 多代理協作架構，處理複雜的企業查詢
+        type: process
+      - id: mlops
+        label: MLOps (DVC/MLflow)
+        x: 250
+        y: 230
+        tooltip: 模型版本控管、實驗追蹤、自動化部署
+        type: process
+      - id: assistant
+        label: VIKI Assistant
+        x: 650
+        y: 165
+        tooltip: 最終面向使用者的企業 AI 助理
+        type: output
+    edges:
+      - source: data
+        target: sft
+        label: training data
+      - source: sft
+        target: model
+        label: fine-tuned
+      - source: model
+        target: multi_agent
+        label: inference
+      - source: mlops
+        target: model
+        label: versioning
+      - source: multi_agent
+        target: assistant
+        label: response
+
+  - id: gallery
+    label: Pictures
+    type: gallery
+    images: []

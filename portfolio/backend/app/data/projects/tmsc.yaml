@@ -1,0 +1,80 @@
+id: tmsc
+name: TMSC
+short_description: Trend Micro Smart Companion — AI-powered Internal Assistant
+company: Trend Micro
+year: "2025"
+tags:
+  - LLM
+  - RAG
+  - Context Engineering
+  - FastAPI
+
+tabs:
+  - id: description
+    label: Description
+    type: text
+    content: |
+      ## TMSC — Trend Micro Smart Companion
+
+      內部智能助理系統，整合 RAG 與 Context Engineering 技術，提供企業內部知識檢索與問答服務。
+
+      ### Key Features
+      - **RAG Pipeline**: 高精度知識檢索與生成
+      - **Context Engineering**: 動態上下文管理，優化回覆品質
+      - **Multi-source Integration**: 整合內部文件、Wiki、Slack 等多來源知識
+
+  - id: structure
+    label: Structure
+    type: diagram
+    nodes:
+      - id: query
+        label: User Query
+        x: 50
+        y: 150
+        tooltip: 使用者透過 Chat 介面提出問題
+        type: input
+      - id: context
+        label: Context Engine
+        x: 250
+        y: 80
+        tooltip: 動態組裝相關上下文，包含對話歷史、使用者 profile、相關文件
+        type: process
+      - id: retriever
+        label: RAG Retriever
+        x: 250
+        y: 220
+        tooltip: 從向量資料庫檢索最相關的文件片段
+        type: process
+      - id: llm
+        label: LLM
+        x: 450
+        y: 150
+        tooltip: 結合 Context + Retrieved docs 生成精準回覆
+        type: agent
+      - id: response
+        label: Response
+        x: 650
+        y: 150
+        tooltip: 最終回覆，包含引用來源
+        type: output
+    edges:
+      - source: query
+        target: context
+        label: ""
+      - source: query
+        target: retriever
+        label: ""
+      - source: context
+        target: llm
+        label: context
+      - source: retriever
+        target: llm
+        label: docs
+      - source: llm
+        target: response
+        label: answer
+
+  - id: gallery
+    label: Pictures
+    type: gallery
+    images: []

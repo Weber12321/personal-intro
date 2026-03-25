@@ -1,0 +1,45 @@
+name: Weber Huang
+name_zh: 黃彥鈞
+title: Senior AI Engineer
+tagline: 專注於 Agentic AI 與企業級 LLM 落地
+location: Taipei, Taiwan
+email: doudi853@gmail.com
+
+education:
+  - degree: Master of Science
+    field: Data Science
+    institution: Taipei Medical University
+    institution_zh: 台北醫學大學
+    year: "2021"
+  - degree: Bachelor of Science
+    field: Library & Information Science
+    institution: National Taiwan University
+    institution_zh: 台灣大學
+    year: "2019"
+
+languages:
+  - language: English
+    level: Advanced
+  - language: Japanese
+    level: Intermediate
+
+tech_stack:
+  Generative AI:
+    - LangGraph
+    - LangChain
+    - RAG / SFT
+    - Context Engineering
+  Engineering:
+    - Python
+    - PyTorch
+    - FastAPI
+    - Django REST
+  Infrastructure:
+    - Docker
+    - MLflow / DVC
+    - Azure / AWS
+    - OpenSearch
+  AI Productivity:
+    - Claude Code
+    - GitHub Copilot
+    - GitHub Projects
