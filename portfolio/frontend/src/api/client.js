@@ -1,9 +1,12 @@
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://selfless-enchantment-production.up.railway.app/api/v1';
+const PROD_API = 'https://selfless-enchantment-production.up.railway.app/api/v1';
+const DEV_API = 'http://localhost:8000/api/v1';
+
+const isDev = typeof window !== 'undefined' && window.location.hostname === 'localhost';
 
 const client = axios.create({
-  baseURL: API_BASE,
+  baseURL: isDev ? DEV_API : PROD_API,
   timeout: 10000,
 });
 
