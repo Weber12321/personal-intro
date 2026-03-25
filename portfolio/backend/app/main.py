@@ -11,7 +11,9 @@ from app.routers import profile, experiences, projects
 app = FastAPI(title="Weber Huang Portfolio API")
 
 cors_env = os.getenv("CORS_ORIGINS", "*")
-origins = ["*"] if cors_env == "*" else [o.strip() for o in cors_env.split(",")]
+# origins = ["*"] if cors_env == "*" else [o.strip() for o in cors_env.split(",")]
+
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
