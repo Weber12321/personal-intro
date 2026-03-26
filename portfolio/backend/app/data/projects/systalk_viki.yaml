@@ -177,70 +177,32 @@ tabs:
     type: poc
     poc_source: Systalk.Coach
     content: |
-      ## Systalk.Coach — AI-powered Sales Training & Data Management
+      ## Systalk.Coach — AI-powered Sales Training
 
-      Systalk.Coach 是 Systalk.VIKI 的 **概念驗證專案（POC）**，透過 AI 驅動的銷售訓練場景
-      驗證 Self-RAG 工作流與多角色 Agent 架構在企業場景中的可行性。
+      Systalk.Coach 是 Systalk.VIKI 的 **概念驗證專案**，透過 AI 驅動的銷售角色扮演訓練
+      驗證 Self-RAG 工作流與多角色 Agent 架構的可行性。
 
-      ### Background
+      ### 要解決的問題
 
-      Systalk.Coach 整合自動化數據管理與互動式 AI 角色扮演訓練，為企業銷售人員提供
-      沉浸式的練習環境與即時回饋。其核心模組 **SIMS（Sales Interactive Management System）**
-      是驗證 VIKI RAG Pipeline 設計的關鍵實作。
+      企業銷售訓練依賴資深員工一對一指導，成本高且難以規模化。
+      訓練生缺乏即時回饋，練習機會受限於人力與排程。
 
-      ### 數據管理系統
+      ### 架構：三角色 Agent 協作
 
-      - **Django REST API**：數據 CRUD 與版本控管
-      - **MongoDB**：儲存非結構化訓練資料
-      - **OpenSearch**：全文搜尋與知識檢索
-
-      自動化數據管理 pipeline 為後續 VIKI 的 LLM 微調奠定數據基礎。
-
-      ---
-
-      ### SIMS — 銷售訓練互動模組
-
-      **三角色架構：**
-      - **Trainee（學員）**：人類銷售訓練生
-      - **Trainer（AI 模擬客戶）**：基於 Self-RAG 工作流，搭配 Gemini 2.0 Flash 進行推論與語音轉錄
-      - **Supervisor（AI 評估者）**：訓練結束後觸發，產出帶記憶摘要的結構化回饋
-
-      **四大子應用：**
-      - **Knowledge App**：建立與管理向量化知識庫（faiss + Google Text Embedding）
-      - **Scenarios App**：設定訓練情境的 CRUD 管理
-      - **Supervisor App**：評估者角色的 CRUD 設定
-      - **Chat App**：核心互動介面，整合計時機制與語音轉錄
+      - **Trainee（學員）** — 人類銷售訓練生
+      - **Trainer（AI 模擬客戶）** — 基於 Self-RAG 工作流，從知識庫即時檢索產品資訊來模擬真實客戶對話
+      - **Supervisor（AI 評估者）** — 訓練結束後自動觸發，產出結構化回饋與對話摘要
 
       **對話流程：**
-      1. 選擇知識庫 → 選擇情境 → 選擇 Supervisor → 設定計時
-      2. 啟動對話（Gemini 2.0 Flash 語音轉錄）
-      3. **Chat Loop**：學員輸入 → Self-RAG → Trainer 回應 → 檢查計時
-      4. **時間到**：觸發 Supervisor 工作流 → Agent Summarization（含記憶） → 產出回饋
+      選擇知識庫 → 選擇情境 → 啟動計時對話 → Self-RAG 驅動的即時問答 →
+      時間到觸發 Supervisor → 產出評分與改善建議
 
       ![SIMS 訓練中 — AI Trainer 即時回應，支援語音輸入與計時機制](/images/viki/coach-training.png)
 
       ![訓練結束 — Supervisor Agent 自動產出結構化回饋與對話摘要](/images/viki/coach-feedback.png)
 
-      ---
-
-      ### 技術選型
-
-      | 組件 | 技術 | 說明 |
-      |------|------|------|
-      | Backend | Django REST Framework | 數據 CRUD 與版本控管 |
-      | Document DB | MongoDB | 非結構化訓練資料 |
-      | Search | OpenSearch | 全文搜尋引擎 |
-      | LLM | Gemini 2.0 Flash | 推論與語音轉錄 |
-      | Embedding | Google Text Embedding | 知識庫向量化 |
-      | Vector Store | faiss | 輕量級向量搜尋 |
-      | Cache | Redis | Supervisor / Scenarios 設定 |
-      | Memory | In-memory History | 對話短期記憶 |
-
-      ---
-
       ### POC 驗證結果
 
-      SIMS 的成功驗證為 Systalk.VIKI 的完整 RAG Pipeline 設計提供了關鍵依據：
-      - Self-RAG 的即時檢索品質確認了向量搜尋 + 重排序方案的可行性
-      - 多 Agent 協作模式被擴展為 VIKI 中更完整的 Hallucination Check 機制
-      - 計時對話流程驗證了 Streaming + 背景任務協調的架構穩定性
+      - Self-RAG 即時檢索品質確認了向量搜尋 + Rerank 方案的可行性，後續擴展為 VIKI 的完整 RAG Pipeline
+      - 多 Agent 協作模式被延伸為 VIKI 的 Hallucination Check 機制
+      - 自動化數據管理 pipeline（Django REST + ChromaDB）為後續 LLM 微調奠定數據基礎
