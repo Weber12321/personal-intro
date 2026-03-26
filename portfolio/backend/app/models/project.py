@@ -23,14 +23,21 @@ class GalleryImage(BaseModel):
     caption: str = ""
 
 
+class TechStackItem(BaseModel):
+    category: str
+    items: list[str]
+
+
 class Tab(BaseModel):
     id: str
     label: str
-    type: str  # "text" | "diagram" | "gallery"
+    type: str  # "text" | "diagram" | "gallery" | "poc"
     content: str | None = None
+    poc_source: str | None = None
     nodes: list[DiagramNode] | None = None
     edges: list[DiagramEdge] | None = None
     images: list[GalleryImage] | None = None
+    tech_stack: list[TechStackItem] | None = None
 
 
 class ProjectSummary(BaseModel):

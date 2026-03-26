@@ -1,43 +1,65 @@
-.description-tab {
+.poc-tab {
   max-width: 800px;
   line-height: 1.8;
 }
 
-.description-tab h2 {
+.poc-source-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  margin-bottom: 1.2rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary, #F5F0EB);
+  border: 1px solid var(--border, #E8E4DF);
+  font-size: 0.8rem;
+}
+
+.poc-source-label {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.poc-source-name {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.poc-tab h2 {
   font-size: 1.5rem;
   color: var(--accent);
   margin-bottom: 1rem;
   margin-top: 0;
 }
 
-.description-tab h3 {
+.poc-tab h3 {
   font-size: 1.1rem;
   color: var(--text-primary);
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
 }
 
-.description-tab p {
+.poc-tab p {
   margin-bottom: 1rem;
   color: var(--text-secondary);
 }
 
-.description-tab ul {
+.poc-tab ul {
   padding-left: 1.25rem;
   margin-bottom: 1rem;
 }
 
-.description-tab li {
+.poc-tab li {
   margin-bottom: 0.5rem;
   color: var(--text-secondary);
 }
 
-.description-tab strong {
+.poc-tab strong {
   color: var(--text-primary);
 }
 
 /* Data Tables */
-.description-tab table {
+.poc-tab table {
   width: 100%;
   border-collapse: collapse;
   margin: 1rem 0 1.5rem;
@@ -45,11 +67,11 @@
   line-height: 1.5;
 }
 
-.description-tab thead {
+.poc-tab thead {
   background: var(--bg-tertiary, #F5F0EB);
 }
 
-.description-tab th {
+.poc-tab th {
   padding: 0.6rem 0.8rem;
   text-align: left;
   font-weight: 600;
@@ -58,19 +80,50 @@
   white-space: nowrap;
 }
 
-.description-tab td {
+.poc-tab td {
   padding: 0.55rem 0.8rem;
   color: var(--text-secondary);
   border-bottom: 1px solid var(--border, #E8E4DF);
   vertical-align: top;
 }
 
-.description-tab tbody tr:hover {
+.poc-tab tbody tr:hover {
   background: var(--bg-tertiary, #F5F0EB);
 }
 
+.poc-tab td strong {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Code blocks */
+.poc-tab pre {
+  background: var(--bg-tertiary, #F5F0EB);
+  border: 1px solid var(--border, #E8E4DF);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  overflow-x: auto;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  margin: 1rem 0;
+}
+
+.poc-tab code {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.8rem;
+}
+
+.poc-tab :not(pre) > code {
+  background: var(--bg-tertiary, #F5F0EB);
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
 /* Inline Images */
-.description-tab img {
+.poc-tab img {
   max-width: 100%;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border, #E8E4DF);
@@ -78,7 +131,7 @@
   box-shadow: var(--shadow-sm);
 }
 
-.description-tab em:only-child {
+.poc-tab em:only-child {
   display: block;
   text-align: center;
   font-size: 0.8rem;
