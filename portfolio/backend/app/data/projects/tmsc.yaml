@@ -1,80 +1,216 @@
 id: tmsc
 name: TMSC
-short_description: Trend Micro Smart Companion — AI-powered Internal Assistant
+short_description: Trend Micro Support Center — Intelligent Troubleshooting & Support Platform
 company: Trend Micro
 year: "2025"
 tags:
-  - LLM
-  - RAG
-  - Context Engineering
-  - FastAPI
+  - Django
+  - Go (Echo)
+  - React
+  - YARA
+  - Vision One XDR
+  - Microservices
 
 tabs:
   - id: description
     label: Description
     type: text
     content: |
-      ## TMSC — Trend Micro Smart Companion
+      ## TMSC — Trend Micro Support Center
 
-      內部智能助理系統，整合 RAG 與 Context Engineering 技術，提供企業內部知識檢索與問答服務。
+      TMSC 是趨勢科技的 **客戶支援中台**，服務全球數千家企業客戶的 Vision One 資安產品線。
+      平台的核心目標是讓支援工程師 **更快找到問題根因、更少依賴人工判斷**，
+      同時讓客戶也能透過自助診斷解決常見問題。
 
-      ### Key Features
-      - **RAG Pipeline**: 高精度知識檢索與生成
-      - **Context Engineering**: 動態上下文管理，優化回覆品質
-      - **Multi-source Integration**: 整合內部文件、Wiki、Slack 等多來源知識
+      ### Problem
+
+      企業級資安產品的技術支援有獨特的複雜度：
+      - 客戶回報的問題通常附帶 **數十萬行 Log**，資深工程師需要數小時才能定位根因
+      - 不同產品線（Apex One、Deep Security、V1ES 等）各有獨立的診斷邏輯，**新人上手門檻高**
+      - US / EU / JP 三大區域各自運作，但客戶期望 **一致的支援品質**
+      - 許多常見問題的排查步驟是固定的，卻仍需人工逐步執行
+
+      ### Solution
+
+      TMSC 整合多個微服務，提供一站式的智能支援體驗：
+
+      1. **自動化 Log 掃描** — 客戶上傳 Support Package 後，YARA 規則引擎自動比對已知問題模式，
+         產出結構化報告，80%+ 的常見問題可以自動辨識
+      2. **一站式 Company Dashboard** — 工程師在單一畫面即可看到客戶的授權狀態、產品部署、
+         近期 Case 與 XDR 告警，不用在多個系統間切換
+
+      ![Company Dashboard — 客戶授權、產品部署、XDR 告警一站式檢視](/images/tmsc/company-dashboard.png)
+
+      3. **SCP 自動化產線** — 支援 7+ 產品線的客製化 Support Package，從建立到部署全程自動追蹤，
+         支援工程師不再需要手動打包
+
+      ![Endpoint SCP 管理 — 跨區域的 Support Package 請求追蹤與狀態管理](/images/tmsc/endpoint-scp.png)
+
+      4. **自助診斷與 Chatbot** — 客戶可以自行執行常見問題的診斷流程，減少 Tier-1 工單量
+
+      ### What I Built
+
+      我以 **後端 Owner** 身份接手 ITP（Intelligent Troubleshooting Platform）Django 後端，
+      負責 API 開發、安全加固、測試基建與日常維運：
+
+      - **API 開發與除錯** — 維護 23 個 Django view 模組的 API 端點，涵蓋 SCP 管理、
+        Vision One XDR 整合、YARA 掃描、xSCP 監控等核心業務；修復 SCP Recovery 狀態機邏輯錯誤等關鍵 Bug
+      - **安全加固** — 系統性審計接手程式碼，消除遠端程式碼執行風險
+      - **測試基建從零建立** — 導入自動化測試 pytest + Django TestCase 框架，建立 unit / security / integration
+        分層測試標記，搭配 PR CI workflow 實現提交即驗證；為安全重構的每個模組補齊對應測試
+      - **基礎設施管理** — 維護 Helm Charts 與 Kubernetes（AKS）部署配置，
+        整合 Azure Key Vault 進行密鑰管理，確保 US / EU / JP 三區域一致部署
+
+      ### Impact
+
+      - 通過安全審計
+      - 測試覆蓋率從 **零 → 持續擴展**，PR 合併前自動驗證
+      - **US / EU / JP** 三大區域統一部署，診斷品質一致
+      - Log 自動掃描覆蓋 **80%+ 常見問題**，工程師從「逐行看 Log」變成「驗證報告建議」
 
   - id: structure
     label: Structure
     type: diagram
     nodes:
-      - id: query
-        label: User Query
-        x: 50
-        y: 150
-        tooltip: 使用者透過 Chat 介面提出問題
+      - id: customer
+        label: Customer / Engineer
+        x: 40
+        y: 180
+        tooltip: 客戶透過自助診斷介面提交問題，或支援工程師透過後台進行調查
         type: input
-      - id: context
-        label: Context Engine
-        x: 250
+      - id: portal
+        label: TMSC Portal (React)
+        x: 220
         y: 80
-        tooltip: 動態組裝相關上下文，包含對話歷史、使用者 profile、相關文件
+        tooltip: React + TypeScript 前端，iframe 架構整合多個子應用（自助診斷、Chatbot、YARA 管理）
         type: process
-      - id: retriever
-        label: RAG Retriever
-        x: 250
-        y: 220
-        tooltip: 從向量資料庫檢索最相關的文件片段
+      - id: itp
+        label: ITP (Django)
+        x: 220
+        y: 280
+        tooltip: Django 5.1 主後端，處理 YARA 掃描、SCP 管理、XDR 整合與使用者認證
         type: process
-      - id: llm
-        label: LLM
-        x: 450
-        y: 150
-        tooltip: 結合 Context + Retrieved docs 生成精準回覆
+      - id: msc
+        label: MSC Server (Go)
+        x: 430
+        y: 80
+        tooltip: Go Echo 服務，處理自助診斷邏輯、Feature Flag (LaunchDarkly) 與 Kusto 查詢
         type: agent
-      - id: response
-        label: Response
-        x: 650
-        y: 150
-        tooltip: 最終回覆，包含引用來源
+      - id: yara
+        label: YARA Engine
+        x: 430
+        y: 280
+        tooltip: yara-python 驅動的規則引擎，掃描 Support Package 偵測已知問題與 IOC 指標
+        type: agent
+      - id: xdr
+        label: Vision One XDR
+        x: 630
+        y: 80
+        tooltip: 趨勢科技 XDR 平台，提供 50+ API 端點用於告警、Agent 管理與威脅情報
+        type: agent
+      - id: storage
+        label: PostgreSQL + Azure Blob
+        x: 630
+        y: 280
+        tooltip: PostgreSQL 儲存 147 個 Model 的結構化資料，Azure Blob 存放 Log 檔與 Support Package
         type: output
     edges:
-      - source: query
-        target: context
-        label: ""
-      - source: query
-        target: retriever
-        label: ""
-      - source: context
-        target: llm
-        label: context
-      - source: retriever
-        target: llm
-        label: docs
-      - source: llm
-        target: response
-        label: answer
+      - source: customer
+        target: portal
+        label: self-service
+      - source: customer
+        target: itp
+        label: submit logs
+      - source: portal
+        target: msc
+        label: diagnosis API
+      - source: itp
+        target: yara
+        label: scan
+      - source: itp
+        target: xdr
+        label: XDR API
+      - source: msc
+        target: xdr
+        label: telemetry
+      - source: itp
+        target: storage
+        label: read/write
+      - source: yara
+        target: storage
+        label: results
+    tech_stack:
+      - category: Backend (ITP)
+        items:
+          - Python 3.10
+          - Django 5.1
+          - Gunicorn / Uvicorn
+          - yara-python 4.5
+          - PostgreSQL 14
+      - category: Backend (MSC)
+        items:
+          - Go 1.22
+          - Echo v4
+          - MongoDB
+          - Redis
+          - LaunchDarkly
+      - category: Frontend
+        items:
+          - React 18
+          - TypeScript
+          - Vite
+          - Tonic UI
+          - Zustand
+          - React Query
+      - category: Cloud & Storage
+        items:
+          - Azure Blob Storage
+          - Azure Data Explorer (Kusto)
+          - Azure Container Registry
+      - category: Integration
+        items:
+          - Vision One XDR (50+ APIs)
+          - Jenkins
+          - GitHub Actions
+          - LDAP / Azure AD
+      - category: Infrastructure
+        items:
+          - Docker
+          - Kubernetes (AKS)
+          - Helm
+          - Prometheus
+          - Playwright (E2E)
+          - pytest
 
-  - id: gallery
-    label: Pictures
-    type: gallery
-    images: []
+  - id: poc
+    label: POC
+    type: poc
+    poc_source: TMSC MCP Server
+    content: |
+      ## TMSC MCP Server — AI-powered Support Automation
+
+      將 TMSC 既有的支援服務能力封裝為 **6 個標準化 MCP Tools**，
+      讓 AI Agent（如 AppsIQ）可以程式化地執行 Vision One 客戶帳戶的診斷與維運操作。
+
+      ### 架構
+
+      ```
+      AI Agent (AppsIQ)
+            │ MCP Protocol (StreamableHTTP)
+            ▼
+      ┌──────────────────┐
+      │  TMSC MCP Server │  FastMCP 3.x
+      └────────┬─────────┘
+               │ HTTP / WebSocket
+          ┌────┼──────────┐
+          ▼    ▼          ▼
+        SASE  SDS       ITP
+      ```
+
+      - 同時對接 3 個異質後端（SASE WebSocket/HTTP、Self-Diagnosis HTTP、ITP Django）
+      - 雙模式 WebSocket 協議（Protocol-header 壓縮 + SendParams 交握）
+      - 所有 Tool 回傳 Pydantic 結構化回應（steps / summary / recommended_actions）
+
+      ### 技術棧
+
+      FastMCP 3.x · FastAPI · httpx · websockets · Pydantic · PyJWT · Python 3.12 · Docker

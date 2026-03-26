@@ -5,7 +5,7 @@ import './Sidebar.css';
 
 const COMPANY_GROUPS = [
   { label: 'Trend Micro', match: 'Trend Micro', ids: ['appsiq', 'tmsc'] },
-  { label: 'TPI', match: 'TPIsoftware', ids: ['systalk_viki', 'systalk_coach'] },
+  { label: 'TPI', match: 'TPIsoftware', ids: ['systalk_viki'] },
   { label: 'Others', match: 'Personal', ids: ['others'] },
 ];
 

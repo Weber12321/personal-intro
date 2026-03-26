@@ -4,12 +4,14 @@ import TabBar from './TabBar';
 import Description from './tabs/Description';
 import Structure from './tabs/Structure';
 import Gallery from './tabs/Gallery';
+import Poc from './tabs/Poc';
 import './ProjectLayout.css';
 
 const TAB_COMPONENTS = {
   text: Description,
   diagram: Structure,
   gallery: Gallery,
+  poc: Poc,
 };
 
 export default function ProjectLayout({ project }) {

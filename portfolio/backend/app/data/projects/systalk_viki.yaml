@@ -1,12 +1,13 @@
 id: systalk_viki
 name: Systalk.VIKI
-short_description: Enterprise GenAI Assistant with LLM Fine-tuning
+short_description: Enterprise GenAI Assistant with RAG Pipeline & LLM Fine-tuning
 company: TPIsoftware
 year: "2024"
 tags:
   - LLM Fine-tuning
-  - Breeze 7B
-  - Llama 3.1
+  - RAG
+  - vLLM
+  - OpenSearch
   - Multi-agent
   - MLOps
 
@@ -17,76 +18,229 @@ tabs:
     content: |
       ## Systalk.VIKI — Enterprise GenAI Assistant
 
-      昕力資訊旗下企業級生成式 AI 助理，結合 LLM 微調與多代理架構，為金融產業客戶提供
-      精準的內部知識問答服務。
+      Systalk.VIKI 是昕力資訊的 **企業級 AI 助理產品**，主要客戶為金融業。
+      核心訴求是讓企業員工可以用自然語言查詢內部知識庫，並獲得 **有引用來源、可驗證** 的回覆。
 
-      ### Key Features
-      - **兩階段 SFT 方案**: 針對 Breeze 7B 及 Llama 3.1 的監督式微調
-      - **金融知識指令集**: 大規模非同步建構，解決多代理架構的數據一致性
-      - **MLOps 平台**: 基於 DVC 與 MLflow 的企業級模型生命週期管理
+      ### Problem
+
+      金融業導入 GenAI 助理的門檻比其他產業更高：
+      - **準確度要求極高** — 錯誤的金融資訊可能導致合規風險，通用 LLM 的「幻覺」問題無法接受
+      - **知識分散** — 產品說明、法規、FAQ 散落在不同系統中，員工找不到或找到過時的答案
+      - **無法黑盒** — 金融客戶需要知道每一個回答的依據來自哪份文件
+
+      ### Solution
+
+      VIKI 提供一套 **端到端的企業 AI 助理方案**：
+
+      1. **多階段品質把關** — 從向量搜尋 → 重排序 → 相關性驗證 → 幻覺偵測，每一層都在過濾不可靠的內容，
+         確保最終回覆有據可查
+      2. **自動化文件處理** — 上傳 PDF / Word / URL 即可自動切分、向量化並建立索引，無需人工介入
+
+      ![VIKI Chat 介面 — 員工用自然語言提問，系統回覆附帶引用來源](/images/viki/chat-assistant.png)
+
+      3. **模型微調** — 針對金融領域知識進行兩階段 SFT，讓模型真正理解產業術語與業務邏輯
+      4. **檢索品質測試** — 內建檢索測試工具，讓維運團隊可以持續驗證和調優搜尋品質
+
+      ![檢索測試介面 — 驗證 RAG 搜尋品質，確保回覆準確度](/images/viki/retrieval-test.png)
+
+      ### What I Built
+
+      我負責 VIKI 的 RAG Pipeline、LLM Server 與文件處理系統：
+
+      - **多階段 RAG Pipeline** — 設計從 Embedding → 向量搜尋 → Rerank → 相關性驗證 → 幻覺偵測的完整檢索流程
+      - **LLM Server** — 建構容器化的多模型推論服務，提供統一 API，支援按需切換不同模型
+      - **文件 Ingestion** — 實作 PDF → HTML → Chunk → Embedding 的自動化處理 pipeline
+      - **兩階段 SFT** — 設計金融領域的監督式微調流程，並建立 MLOps pipeline 管理模型版本
 
       ### Impact
-      - 企業內部知識回覆準確率顯著提升
-      - 建立可重複使用的 SFT pipeline
+
+      - 幻覺偵測機制大幅降低不實回覆率
+      - 文件上傳到可搜尋只需分鐘級等待
+      - 金融領域知識回覆準確率顯著提升
 
   - id: structure
     label: Structure
     type: diagram
     nodes:
-      - id: data
-        label: Financial Data
-        x: 50
-        y: 100
-        tooltip: 金融領域知識庫，包含法規、產品說明、FAQ 等
+      - id: user
+        label: User Query
+        x: 40
+        y: 180
+        tooltip: 使用者透過 Chat 介面提出問題
         type: input
-      - id: sft
-        label: 2-Stage SFT
-        x: 250
-        y: 100
-        tooltip: "第一階段：通用指令微調；第二階段：領域知識精調"
+      - id: api_server
+        label: API Server
+        x: 200
+        y: 180
+        tooltip: 中央 API 服務，協調文件處理、Prompt 管理與 RAG 檢索
         type: process
-      - id: model
-        label: Breeze 7B / Llama 3.1
-        x: 450
-        y: 100
-        tooltip: 微調後的 LLM，具備金融領域專業知識
+      - id: doc_pipeline
+        label: Document Pipeline
+        x: 200
+        y: 40
+        tooltip: 文件 Ingestion：PDF/docx/URL → HTML → Chunk → Embedding，寫入 OpenSearch
+        type: process
+      - id: opensearch
+        label: OpenSearch
+        x: 400
+        y: 40
+        tooltip: 向量資料庫，儲存文件 Embedding 並提供向量搜尋
         type: agent
-      - id: multi_agent
-        label: Multi-Agent
-        x: 450
-        y: 230
-        tooltip: 多代理協作架構，處理複雜的企業查詢
-        type: process
-      - id: mlops
-        label: MLOps (DVC/MLflow)
-        x: 250
-        y: 230
-        tooltip: 模型版本控管、實驗追蹤、自動化部署
-        type: process
-      - id: assistant
-        label: VIKI Assistant
-        x: 650
-        y: 165
-        tooltip: 最終面向使用者的企業 AI 助理
+      - id: rag
+        label: RAG Engine
+        x: 400
+        y: 180
+        tooltip: 多階段 RAG：Vector Search → Rerank → Relevance Validation → Hallucination Check
+        type: agent
+      - id: llm_server
+        label: LLM Server (vLLM)
+        x: 400
+        y: 320
+        tooltip: 容器化推論服務，OpenAI 相容 API，支援 Phi-4 / Gemma 3 / Mixtral 多模型
+        type: agent
+      - id: postgres
+        label: PostgreSQL
+        x: 200
+        y: 320
+        tooltip: 儲存 Prompt 設定、模型配置與系統 metadata
+        type: output
+      - id: response
+        label: Response
+        x: 600
+        y: 180
+        tooltip: 經過幻覺偵測驗證的最終回覆
         type: output
     edges:
-      - source: data
-        target: sft
-        label: training data
-      - source: sft
-        target: model
-        label: fine-tuned
-      - source: model
-        target: multi_agent
+      - source: user
+        target: api_server
+        label: query
+      - source: api_server
+        target: doc_pipeline
+        label: ingest
+      - source: doc_pipeline
+        target: opensearch
+        label: embed
+      - source: api_server
+        target: rag
+        label: retrieve
+      - source: opensearch
+        target: rag
+        label: vectors
+      - source: rag
+        target: llm_server
         label: inference
-      - source: mlops
-        target: model
-        label: versioning
-      - source: multi_agent
-        target: assistant
-        label: response
+      - source: llm_server
+        target: rag
+        label: generate
+      - source: api_server
+        target: postgres
+        label: CRUD
+      - source: rag
+        target: response
+        label: verified answer
+    tech_stack:
+      - category: RAG Pipeline
+        items:
+          - BGE M3 (Embedding)
+          - BGE rerank V2-M3
+          - OpenSearch
+          - Relevance Validation
+          - Hallucination Check
+      - category: LLM Server
+        items:
+          - vLLM
+          - Docker
+          - OpenAI Compatible API
+          - Phi-4
+          - Gemma 3
+          - Mixtral
+      - category: Fine-tuning
+        items:
+          - Breeze 7B
+          - Llama 3.1
+          - 2-Stage SFT
+          - DVC
+          - MLflow
+      - category: Backend
+        items:
+          - Python
+          - FastAPI
+          - PostgreSQL
+      - category: Document Processing
+        items:
+          - PDF → HTML
+          - Chunking
+          - Embedding API
 
-  - id: gallery
-    label: Pictures
-    type: gallery
-    images: []
+  - id: poc
+    label: POC
+    type: poc
+    poc_source: Systalk.Coach
+    content: |
+      ## Systalk.Coach — AI-powered Sales Training & Data Management
+
+      Systalk.Coach 是 Systalk.VIKI 的 **概念驗證專案（POC）**，透過 AI 驅動的銷售訓練場景
+      驗證 Self-RAG 工作流與多角色 Agent 架構在企業場景中的可行性。
+
+      ### Background
+
+      Systalk.Coach 整合自動化數據管理與互動式 AI 角色扮演訓練，為企業銷售人員提供
+      沉浸式的練習環境與即時回饋。其核心模組 **SIMS（Sales Interactive Management System）**
+      是驗證 VIKI RAG Pipeline 設計的關鍵實作。
+
+      ### 數據管理系統
+
+      - **Django REST API**：數據 CRUD 與版本控管
+      - **MongoDB**：儲存非結構化訓練資料
+      - **OpenSearch**：全文搜尋與知識檢索
+
+      自動化數據管理 pipeline 為後續 VIKI 的 LLM 微調奠定數據基礎。
+
+      ---
+
+      ### SIMS — 銷售訓練互動模組
+
+      **三角色架構：**
+      - **Trainee（學員）**：人類銷售訓練生
+      - **Trainer（AI 模擬客戶）**：基於 Self-RAG 工作流，搭配 Gemini 2.0 Flash 進行推論與語音轉錄
+      - **Supervisor（AI 評估者）**：訓練結束後觸發，產出帶記憶摘要的結構化回饋
+
+      **四大子應用：**
+      - **Knowledge App**：建立與管理向量化知識庫（faiss + Google Text Embedding）
+      - **Scenarios App**：設定訓練情境的 CRUD 管理
+      - **Supervisor App**：評估者角色的 CRUD 設定
+      - **Chat App**：核心互動介面，整合計時機制與語音轉錄
+
+      **對話流程：**
+      1. 選擇知識庫 → 選擇情境 → 選擇 Supervisor → 設定計時
+      2. 啟動對話（Gemini 2.0 Flash 語音轉錄）
+      3. **Chat Loop**：學員輸入 → Self-RAG → Trainer 回應 → 檢查計時
+      4. **時間到**：觸發 Supervisor 工作流 → Agent Summarization（含記憶） → 產出回饋
+
+      ![SIMS 訓練中 — AI Trainer 即時回應，支援語音輸入與計時機制](/images/viki/coach-training.png)
+
+      ![訓練結束 — Supervisor Agent 自動產出結構化回饋與對話摘要](/images/viki/coach-feedback.png)
+
+      ---
+
+      ### 技術選型
+
+      | 組件 | 技術 | 說明 |
+      |------|------|------|
+      | Backend | Django REST Framework | 數據 CRUD 與版本控管 |
+      | Document DB | MongoDB | 非結構化訓練資料 |
+      | Search | OpenSearch | 全文搜尋引擎 |
+      | LLM | Gemini 2.0 Flash | 推論與語音轉錄 |
+      | Embedding | Google Text Embedding | 知識庫向量化 |
+      | Vector Store | faiss | 輕量級向量搜尋 |
+      | Cache | Redis | Supervisor / Scenarios 設定 |
+      | Memory | In-memory History | 對話短期記憶 |
+
+      ---
+
+      ### POC 驗證結果
+
+      SIMS 的成功驗證為 Systalk.VIKI 的完整 RAG Pipeline 設計提供了關鍵依據：
+      - Self-RAG 的即時檢索品質確認了向量搜尋 + 重排序方案的可行性
+      - 多 Agent 協作模式被擴展為 VIKI 中更完整的 Hallucination Check 機制
+      - 計時對話流程驗證了 Streaming + 背景任務協調的架構穩定性

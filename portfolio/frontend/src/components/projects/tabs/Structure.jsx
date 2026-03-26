@@ -62,19 +62,41 @@ export default function Structure({ data }) {
     [data.edges]
   );
 
+  const techStack = data.tech_stack || [];
+
   return (
-    <div className="structure-tab card">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeTypes}
-        fitView
-        attributionPosition="bottom-left"
-        proOptions={proOptions}
-      >
-        <Controls />
-        <Background color="#E8E4DF" gap={20} />
-      </ReactFlow>
+    <div className="structure-wrapper">
+      <div className="structure-tab card">
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          fitView
+          attributionPosition="bottom-left"
+          proOptions={proOptions}
+        >
+          <Controls />
+          <Background color="#E8E4DF" gap={20} />
+        </ReactFlow>
+      </div>
+
+      {techStack.length > 0 && (
+        <div className="tech-stack card">
+          <h3 className="tech-stack-title">Tech Stack</h3>
+          <div className="tech-stack-grid">
+            {techStack.map((group) => (
+              <div key={group.category} className="tech-stack-group">
+                <h4 className="tech-stack-category">{group.category}</h4>
+                <div className="tech-stack-items">
+                  {group.items.map((item) => (
+                    <span key={item} className="tech-stack-badge">{item}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,11 +1,13 @@
 id: appsiq
 name: AppsIQ
-short_description: Agentic AI Workflow & Hyper-automation Platform
+short_description: Coagentic Application Platform — Real-time AI-Human Collaboration
 company: Trend Micro
 year: "2025"
 tags:
   - LangGraph
   - FastAPI
+  - Vue 3
+  - CRDT
   - MCP
   - Agentic AI
 
@@ -14,73 +16,164 @@ tabs:
     label: Description
     type: text
     content: |
-      ## AppsIQ Overview
+      ## AppsIQ — Coagentic Application Platform
 
-      AppsIQ 是趨勢科技內部的 Agentic AI 與超自動化平台，透過 LangGraph 構建跨區域智能服務，
-      整合 FastMCP 工具鏈實現高效率的任務自動化。
+      AppsIQ 是趨勢科技的 **AI 協作應用平台**，讓內部團隊可以快速建立 AI 驅動的業務應用，
+      並在同一工作空間中與 AI Agent 即時協作。
 
-      ### Key Features
-      - **Agentic Workflows**: 基於 LangGraph 的多代理工作流編排
-      - **FastMCP Toolchain**: 利用 FastAPI 優化系統延遲，MCP 架構提升回覆準確率
-      - **D365 CRM Integration**: 自動化重複性工作流，減少人工干預
+      ### Problem
 
-      ### Technical Highlights
-      - Cross-regional service orchestration
-      - Real-time task routing and execution
-      - Scalable agent architecture
+      企業導入 AI 時常見的瓶頸不在模型本身，而在 **如何讓 AI 真正融入日常工作流程**：
+      - 業務單位提出需求後，往往需要數週等待 IT 開發專屬工具
+      - 現有 ChatBot 只能一問一答，無法深度參與文件編輯、資料查詢等實際工作
+      - 多人同時使用時，AI 的修改結果無法即時同步給其他協作者
+
+      ### Solution
+
+      AppsIQ 提供一個 **「應用即服務」** 的平台，讓使用者可以：
+
+      1. **零程式碼建立應用** — 透過 YAML 定義或讓 AI 自動生成，數小時內上線新的業務工具
+         （知識庫管理、客戶追蹤、Support Queue 等）
+      2. **AI 與人類即時共編** — AI Agent 的每一次修改都透過 CRDT 即時同步到所有協作者畫面，
+         就像 Google Docs 多人協作一樣自然
+      3. **整合外部系統** — 透過 MCP 協議與 OpenAPI 整合，AI Agent 可以直接操作 D365 CRM、
+         知識庫搜尋等外部服務
+
+      ![AppsIQ Knowledge Article Drafter — AI 輔助撰寫知識庫文章，右側面板即時提供建議與重複檢查](/images/appsiq/kb-article-drafter.png)
+
+      ### What I Built
+
+      我在 AppsIQ 負責兩個核心模組的開發：
+
+      - **Knowledge Article Drafter** — 開發 MCP Tools 與 Agent Workflow，讓 AI Agent 能自動檢索
+        既有知識庫、比對重複文章、輔助工程師撰寫與審閱技術支援文件，大幅縮短知識文章的產出週期
+      - **記憶體管理模組（Mem0 POC）** — 導入 Mem0 進行概念驗證，為 Agent 建立跨 Session 的
+        長期記憶能力，讓 AI 能記住用戶偏好與歷史互動脈絡，提升個人化回覆品質
+
+      ![Tool Catalog — 統一管理 Internal / MCP / OpenAPI 三類工具，支援權限分級](/images/appsiq/tool-catalog.png)
+
+      ![App Permission 設定 — 細粒度的存取控制，支援 Editors、Actions、Prompts 分別授權](/images/appsiq/app-permissions.png)
+
+      ### Impact
+
+      - 新應用上線時間從 **數週 → 數小時**
+      - 跨區域團隊（US / EU / JP / TW）即時協作
+      - 平台上已建立 **Knowledge Article Drafter**、**Feedback Hub**、**Sales Pipeline Tracker** 等多個正式應用
+      - 整合 16 個工具模組，涵蓋完整的支援與業務場景
 
   - id: structure
     label: Structure
     type: diagram
     nodes:
       - id: user
-        label: User Request
-        x: 50
-        y: 150
-        tooltip: 使用者透過介面提交任務需求
+        label: User / Browser
+        x: 40
+        y: 180
+        tooltip: 使用者透過 Vue 3 前端介面操作應用，支援多人即時協作
         type: input
-      - id: orchestrator
-        label: Agent Orchestrator
-        x: 250
-        y: 150
-        tooltip: LangGraph 驅動的工作流編排引擎，負責任務拆解與路由
-        type: process
-      - id: mcp
-        label: FastMCP Tools
-        x: 450
+      - id: crdt
+        label: CRDT Sync (Yjs)
+        x: 220
         y: 80
-        tooltip: FastAPI-based MCP 工具鏈，提供低延遲的外部系統存取
+        tooltip: Yjs 實現的 CRDT 同步層，透過 WebSocket 傳輸二進位 Yjs 更新與 JSON Patch
+        type: process
+      - id: api
+        label: FastAPI Backend
+        x: 220
+        y: 280
+        tooltip: 非同步 REST API 處理業務邏輯、認證、資料存取與 Agent 調度
+        type: process
+      - id: agent
+        label: LangGraph Agents
+        x: 430
+        y: 80
+        tooltip: 多代理編排引擎，支援 App Builder、Feedback 等 Agent，token-by-token 串流回應
         type: agent
-      - id: crm
-        label: D365 CRM
-        x: 450
-        y: 220
-        tooltip: Microsoft Dynamics 365 CRM 整合，自動化客戶服務流程
+      - id: mcp
+        label: MCP Tools
+        x: 430
+        y: 280
+        tooltip: 16 個工具模組（Chat、State、Data、File、App 等），透過 MCP 協議對外整合
         type: agent
-      - id: output
-        label: Response
-        x: 650
-        y: 150
-        tooltip: 彙整所有 Agent 的執行結果，回傳最終回覆
+      - id: redis
+        label: Redis (Events / PubSub)
+        x: 430
+        y: 180
+        tooltip: Redis Streams 事件匯流排 + Pub/Sub 跨實例廣播 + 快取層
+        type: process
+      - id: db
+        label: PostgreSQL + Milvus
+        x: 630
+        y: 180
+        tooltip: PostgreSQL 儲存結構化資料（22 張表），Milvus 提供向量搜尋能力
         type: output
     edges:
       - source: user
-        target: orchestrator
-        label: task
-      - source: orchestrator
+        target: crdt
+        label: WebSocket
+      - source: user
+        target: api
+        label: REST API
+      - source: crdt
+        target: redis
+        label: broadcast
+      - source: api
+        target: agent
+        label: invoke
+      - source: agent
         target: mcp
         label: tool call
-      - source: orchestrator
-        target: crm
-        label: automation
+      - source: api
+        target: redis
+        label: events
+      - source: api
+        target: db
+        label: read/write
       - source: mcp
-        target: output
-        label: result
-      - source: crm
-        target: output
-        label: status
+        target: db
+        label: query
+    tech_stack:
+      - category: Backend
+        items:
+          - Python 3.12
+          - FastAPI
+          - LangGraph
+          - pycrdt (Yjs)
+          - uv
+      - category: Frontend
+        items:
+          - Vue 3.5
+          - Pinia
+          - TailwindCSS 4
+          - Vite 6
+          - Yjs
+          - Quill 2
+      - category: Data
+        items:
+          - PostgreSQL 16
+          - Redis 7
+          - Milvus 2.4
+          - SQLite (dev)
+      - category: LLM Providers
+        items:
+          - Anthropic
+          - OpenAI
+          - Azure OpenAI
+          - Ollama
+      - category: Auth
+        items:
+          - JWT
+          - MS AD SSO
+          - Azure Entra ID (PKCE)
+      - category: Infrastructure
+        items:
+          - Docker
+          - Lando
+          - Playwright (E2E)
+          - pytest
 
-  - id: gallery
-    label: Pictures
-    type: gallery
-    images: []
+  - id: poc
+    label: POC
+    type: poc
+    content: |
+      *POC content coming soon.*

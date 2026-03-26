@@ -1,59 +1,298 @@
 id: others
 name: Others
-short_description: Side Projects & Open Source Contributions
+short_description: Side Projects, Open Source & System Design Proposals
 company: Personal
-year: "2021-2025"
+year: "2021-2026"
 tags:
-  - NLP
-  - Sentiment Analysis
-  - Open Source
+  - System Design
+  - Multi-Agent
+  - A2A
+  - LangGraph
+  - MCP
+  - RAG
 
 tabs:
   - id: description
     label: Description
     type: text
     content: |
-      ## Other Projects
+      ## System Design Interview Proposal
 
-      ### NLP Research (Eland Information, 2021)
-      - 情感分析系統的開發與優化
-      - NLP 模型訓練 pipeline 建立
+      ### 題目：智能移動 AI 代理人（Intelligent Mobility AI Agent）
 
-      ### Open Source & Side Projects
-      - AI 工具鏈開發與實驗
-      - 技術社群分享與知識整理
+      設計一個 **MaaS（Mobility as a Service）Multi-Agent 平台**，讓使用者透過自然語言對話
+      完成「租車 → 多模式交通規劃 → 餐飲住宿預訂 → 即時車況回報」的端到端旅程。
+
+      ---
+
+      ### 發想
+
+      格上租車正從傳統租車公司轉型為一站式移動服務平台，擁有 Go Smart 共享車、LINE GO（480 萬用戶）、
+      機場接送、樂齡服務等多元業務線。目前最核心的 AI 專案是「智能移動 AI 代理人」——
+      整合用車數據、交通資訊與使用者行為，主動提供個人化的智慧移動建議。
+
+      **核心問題**：移動服務涵蓋租車、叫車、交通、訂位、長照等多個獨立領域，
+      每個領域有不同的 API、推理模式與錯誤處理邏輯。
+      如果用單一 Agent 硬塞所有能力，會導致 system prompt 膨脹、tool namespace 污染、無法獨立迭代。
+
+      **設計方向**：採用 **三層協議架構**，讓每個領域由專責 Agent 處理，
+      透過 Orchestrator 編排協作，並預留對外夥伴互通的能力：
+
+      | 協議層 | 職責 | 說明 |
+      |--------|------|------|
+      | **A2A**（Agent-to-Agent） | 跨系統 Agent 互通 | LINE GO Agent、餐飲平台 Agent 等外部夥伴透過 Agent Card 發現與委派任務 |
+      | **LangGraph** | 系統內部 Multi-Agent 編排 | Orchestrator 拆解意圖、派發子任務給 Specialist Agents、合併結果 |
+      | **MCP**（Model Context Protocol） | Agent → 外部 API 工具呼叫 | 將租車系統、交通查詢、訂位等 API 封裝為標準化 MCP Tools |
+
+      ---
+
+      ### 系統設計限制（Constraints）
+
+      | 維度 | 限制 |
+      |------|------|
+      | **用戶規模** | 480 萬 LINE GO 註冊用戶，峰值 QPS 預估 500+ |
+      | **延遲要求** | 對話首 Token < 2 秒（Streaming），完整回覆 < 10 秒 |
+      | **準確度** | 車輛可用性、價格查詢零容錯；交通建議允許最佳近似 |
+      | **多語言** | 繁體中文為主，支援英文 / 日文（外籍旅客線上租車場景） |
+      | **合規** | 個人資料保護法（PDPA）、駕照驗證 AI 審核需 < 3 分鐘 |
+      | **可用性** | 24/7 服務，SLA 99.9% |
+      | **成本** | Token 消耗需可監控與設上限，避免 LLM API 成本失控 |
+      | **可擴展性** | 新業務線（如樂齡、電動車充電）可以新增 Specialist Agent 而不影響既有流程 |
+
+      ---
+
+      ### Multi-Agent 架構設計
+
+      #### Orchestrator Agent（編排者）
+
+      - 理解用戶意圖，將複雜請求拆解為子任務圖（DAG）
+      - 根據子任務類型路由到對應的 Specialist Agent
+      - 管理對話記憶（短期 Redis + 長期 LangGraph Checkpoint）
+      - 合併各 Specialist 的回應，產出連貫的最終回覆
+      - 處理 human-in-the-loop 確認（如預訂前的價格確認）
+
+      #### Specialist Agents（領域專家）
+
+      | Agent | Skills | 工具（MCP） | 說明 |
+      |-------|--------|-------------|------|
+      | **Rental Agent** | search, reserve, pricing, cancel | 租車系統 API, Go Smart API | 共享車 + 傳統租車的搜尋、預訂、報價、取消 |
+      | **Transit Agent** | route_plan, eta, realtime_alert | Google Maps API, 公共運輸 API | 多模式交通規劃（捷運/公車/高鐵），即時到站與延誤通知 |
+      | **Booking Agent** | search, book, cancel, recommend | 餐飲訂位 API, 住宿 API | 餐廳與住宿的搜尋、預訂、推薦 |
+      | **Elder Care Agent** | dispatch, medical_transport, accessibility | 長照派遣 API, 無障礙資源 API | 樂齡接送、醫療交通、無障礙需求處理 |
+      | **Fleet Agent** | vehicle_status, diagnostics, breakdown | 車聯網 API, 道路救援 API | 即時車況監控、故障診斷、道路救援派遣 |
+
+      每個 Specialist Agent 有獨立的 system prompt、tool scope 與 LLM 配置，可以獨立迭代而不影響其他 Agent。
+
+      #### A2A Gateway（對外互通）
+
+      - 發布 **Agent Card**，宣告平台能力（租車、交通、訂位等）
+      - 接收外部 Agent 的 Task 委派（如 LINE GO Agent 請求格上查詢共享車可用性）
+      - 將外部請求轉為內部 LangGraph 子圖執行
+      - 支援 Streaming 回傳中間狀態，讓外部 Agent 可以即時呈現進度
+
+      ---
+
+      ### 工具選擇（Tech Choices & Rationale）
+
+      | 組件 | 選型 | 理由 |
+      |------|------|------|
+      | **Multi-Agent 編排** | LangGraph（StateGraph + Subgraph） | 每個 Specialist 是一個 Subgraph，Orchestrator 透過 conditional edge 路由；原生 checkpoint 支援長對話斷點續跑 |
+      | **Agent 間通訊** | A2A Protocol | Google 開源標準，Agent Card 描述能力、Task 為工作單元、支援 streaming push；預留對外夥伴互通能力 |
+      | **LLM** | Multi-model routing | Orchestrator 用 Flash（快速意圖辨識）；Specialist 按複雜度選 Flash / Sonnet / 開源；批次任務用開源模型降成本 |
+      | **工具層** | MCP + FastMCP | 標準化 Tool Schema，各 Specialist 只能存取授權的 MCP Tools（權限隔離）；已有 TMSC MCP Server 實戰經驗 |
+      | **RAG** | pgvector + BGE M3 + Rerank | 共用知識庫（車輛規格、條款、FAQ），各 Agent 透過 namespace 隔離查詢範圍；BGE M3 原生多語言 |
+      | **Session & Memory** | LangGraph Checkpoint + Redis | Checkpoint 持久化完整 multi-agent 圖狀態；Redis 快取用戶偏好與活躍 Session |
+      | **Evaluation** | RAGAS + DeepEval + LangSmith | 按 Agent 粒度追蹤品質指標；CI 內跑 regression test；LangSmith trace 每個 node 的 Token 與延遲 |
+      | **Streaming** | LangGraph Streaming + FastAPI SSE | Orchestrator 串流各 Specialist 的中間結果（「正在查詢車輛…」「已找到 3 條路線…」） |
+
+      ---
+
+      ### Contribute Value（帶來的價值）
+
+      1. **Multi-Agent 編排實戰**
+         - 在趨勢科技 AppsIQ 用 LangGraph 建構 multi-agent 協作平台（AI 與人類即時共編）
+         - 熟悉 Orchestrator + Worker 模式、subgraph 拆分、conditional routing
+
+      2. **MCP 工具整合**
+         - 在 AppsIQ 設計過 Tool Catalog（Internal + MCP + OpenAPI 三類工具，16 個模組）
+         - 在 TMSC MCP Server 實作過 6 個 MCP Tools，整合 3 個異質後端（WebSocket + HTTP + JWT）
+         - 可快速設計 Agent Skill → MCP Tool 的映射，並實作權限隔離
+
+      3. **RAG Pipeline 設計**
+         - 在 Systalk.VIKI 建構多階段 RAG（Vector Search → Rerank → Relevance Validation → Hallucination Check）
+         - 可將幻覺偵測應用在車輛價格與可用性查詢，確保零誤報
+
+      4. **LLM 成本優化**
+         - AppsIQ 支援 4 家 LLM Provider（Anthropic / OpenAI / Azure / Ollama）動態切換
+         - multi-agent 架構天然適合 per-agent model routing，各 Specialist 用最合適的模型
+
+      5. **A2A 生態拓展**
+         - Agent Card + Task 機制讓平台能力可被外部 Agent 發現與使用
+         - 格上的移動服務可以成為 MaaS 生態的 Agent 提供者，而不只是 API 提供者
 
   - id: structure
     label: Structure
     type: diagram
     nodes:
-      - id: nlp
-        label: NLP Models
-        x: 150
-        y: 100
-        tooltip: 情感分析、文本分類等 NLP 基礎模型
+      - id: user
+        label: User (LINE / App)
+        x: 40
+        y: 250
+        tooltip: 終端用戶透過 LINE GO App 或 Web 介面以自然語言發起移動需求
+        type: input
+      - id: gateway
+        label: FastAPI + A2A Gateway
+        x: 200
+        y: 250
+        tooltip: FastAPI 入口處理用戶請求（SSE Streaming）；A2A Gateway 接收外部 Agent 的 Task 委派，發布 Agent Card
         type: process
-      - id: tools
-        label: AI Toolchain
-        x: 150
-        y: 230
-        tooltip: 個人開發的 AI 工具與自動化腳本
-        type: process
-      - id: community
-        label: Community
+      - id: orchestrator
+        label: Orchestrator Agent
         x: 400
-        y: 165
-        tooltip: 技術分享、開源貢獻
+        y: 250
+        tooltip: LangGraph StateGraph 編排核心：意圖辨識 → 子任務拆解（DAG）→ 路由到 Specialist → 合併回覆；管理對話記憶與 human-in-the-loop
+        type: agent
+      - id: rental
+        label: Rental Agent
+        x: 600
+        y: 80
+        tooltip: "Skills: search, reserve, pricing, cancel — Go Smart 共享車 + 傳統租車"
+        type: agent
+      - id: transit
+        label: Transit Agent
+        x: 600
+        y: 200
+        tooltip: "Skills: route_plan, eta, realtime_alert — 多模式交通規劃（捷運/公車/高鐵）"
+        type: agent
+      - id: booking
+        label: Booking Agent
+        x: 600
+        y: 320
+        tooltip: "Skills: search, book, cancel, recommend — 餐飲住宿預訂"
+        type: agent
+      - id: eldercare
+        label: Elder Care Agent
+        x: 600
+        y: 440
+        tooltip: "Skills: dispatch, medical_transport, accessibility — 樂齡接送、醫療交通"
+        type: agent
+      - id: mcp
+        label: MCP Tool Registry
+        x: 800
+        y: 200
+        tooltip: FastMCP 統一管理所有外部 API Tools（租車、交通、訂位、車聯網），各 Agent 按權限存取授權的 Tools
+        type: process
+      - id: rag
+        label: RAG Engine
+        x: 400
+        y: 450
+        tooltip: pgvector + BGE M3 + Cross-encoder Rerank；namespace 隔離各領域知識（車輛規格、條款、交通、餐飲）
+        type: agent
+      - id: data
+        label: PostgreSQL + Redis
+        x: 200
+        y: 450
+        tooltip: PostgreSQL（pgvector + LangGraph Checkpoint）持久化向量與 multi-agent 圖狀態；Redis 快取活躍 Session 與用戶偏好
+        type: output
+      - id: eval
+        label: Eval & Observability
+        x: 800
+        y: 400
+        tooltip: LangSmith per-agent trace、RAGAS 檢索品質、DeepEval 回覆品質、Token 消耗監控、Agent 行為 regression test
         type: output
     edges:
-      - source: nlp
-        target: community
-        label: research
-      - source: tools
-        target: community
-        label: sharing
+      - source: user
+        target: gateway
+        label: natural language
+      - source: gateway
+        target: orchestrator
+        label: route / A2A task
+      - source: orchestrator
+        target: rental
+        label: delegate
+      - source: orchestrator
+        target: transit
+        label: delegate
+      - source: orchestrator
+        target: booking
+        label: delegate
+      - source: orchestrator
+        target: eldercare
+        label: delegate
+      - source: rental
+        target: mcp
+        label: MCP tool call
+      - source: transit
+        target: mcp
+        label: MCP tool call
+      - source: booking
+        target: mcp
+        label: MCP tool call
+      - source: eldercare
+        target: mcp
+        label: MCP tool call
+      - source: orchestrator
+        target: rag
+        label: retrieve knowledge
+      - source: rag
+        target: data
+        label: vector search
+      - source: orchestrator
+        target: data
+        label: checkpoint / session
+      - source: orchestrator
+        target: eval
+        label: trace
+    tech_stack:
+      - category: Multi-Agent Orchestration
+        items:
+          - LangGraph (StateGraph + Subgraph)
+          - Orchestrator + Specialist Pattern
+          - Conditional Routing
+          - Human-in-the-loop
+          - LangGraph Checkpoint
+      - category: Agent Communication
+        items:
+          - A2A Protocol (Agent Card + Task)
+          - Streaming Push Notification
+          - Agent Skill Registry
+      - category: Tool Integration
+        items:
+          - MCP (Model Context Protocol)
+          - FastMCP
+          - Per-agent Tool Authorization
+          - OpenAPI Auto-discovery
+      - category: LLM & Routing
+        items:
+          - Multi-model Routing
+          - Gemini 2.0 Flash (intent / fast)
+          - Claude Sonnet (complex reasoning)
+          - Open-source (batch / low-cost)
+      - category: RAG & Search
+        items:
+          - PostgreSQL pgvector
+          - BGE M3 Embedding (multilingual)
+          - Cross-encoder Rerank
+          - Namespace Isolation
+      - category: Backend
+        items:
+          - Python 3.12
+          - FastAPI
+          - SSE Streaming
+          - uv
+      - category: Data & Cache
+        items:
+          - PostgreSQL (pgvector + Checkpoint)
+          - Redis (Session + Preferences)
+      - category: Evaluation & Observability
+        items:
+          - LangSmith (per-agent trace)
+          - RAGAS
+          - DeepEval
+          - OpenTelemetry
 
-  - id: gallery
-    label: Pictures
-    type: gallery
-    images: []
+  - id: poc
+    label: POC
+    type: poc
+    content: |
+      *POC content coming soon.*

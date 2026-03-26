@@ -66,3 +66,60 @@
   border: 6px solid transparent;
   border-top-color: var(--bg-sidebar);
 }
+
+/* Tech Stack Section */
+.structure-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.tech-stack {
+  padding: 1.5rem;
+}
+
+.tech-stack-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 1rem 0;
+  letter-spacing: 0.02em;
+}
+
+.tech-stack-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.2rem;
+}
+
+.tech-stack-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tech-stack-category {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.tech-stack-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.tech-stack-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary, #F5F0EB);
+  color: var(--text-primary);
+  border: 1px solid var(--border, #E8E4DF);
+}
